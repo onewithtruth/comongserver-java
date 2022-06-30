@@ -17,15 +17,16 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
-import static org.springframework.http.RequestEntity.put;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -116,12 +117,13 @@ class PostsApiControllerTest {
         HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
 
         //when
-//        ResponseEntity<Long> responseEntity = restTemplate
-//                .exchange(url, HttpMethod.PUT, requestEntity, Long.class);
+        ResponseEntity<Long> responseEntity = restTemplate
+                .exchange(url, HttpMethod.PUT, requestEntity, Long.class);
 
-//        mvc.perform(put(url)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content)
+        mvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
 
         //then
 //        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
