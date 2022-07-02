@@ -52,4 +52,11 @@ jobs:
     #압축된 프로젝트 S3로 전송
     - name: Uplaod to S3
       run: aws s3 cp --region ap-northeast-2 ./comongjava-deploy.zip s3://$S3_BUCKET_NAME/comongjava-deploy.zip
-     
+
+    # CodeDeploy에게 배로 명령을 내립니다.
+    - name: Code Deploy
+      run: >
+        aws deploy create-deployment --application-name comongjava-githubAction-deploy 
+        --deployment-config-name CodeDeployDefault.AllAtOnce
+        --deployment-group-name comongjava-githubAction-deployGroup
+        --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=comongjava-deploy.zip

@@ -1,26 +1,28 @@
 #!/bin/bash
-REPOSITORY=/home/ec2-user/app/step1
-PROJECT_NAME=freelec-springboot2-webservice
-cd $REPOSITORY/$PROJECT_NAME/
-echo "> Git Pull"
-git pull
-echo "> 프로젝트 Build 시작"
-./gradlew build
-echo "> step1 디렉토리로 이동"
-cd $REPOSITORY
-echo "> Build 파일 복사"
-cp $REPOSITORY/$PROJECT_NAME/build/libs/*.jar $REPOSITORY/
-echo "> 현재 구동중인 애플리케이션 pid 확인"
-CURRENT_PID=${pgrep -f ${PROJECT_NAME}.*.jar)
-echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
-if [ -z "$CURRENT_PID" ]; then
- echo "> 현재 구동 중인 애플리케이션이 없으므로 종료하지 않습니다."
+BUILD_JAR=$(ls /home/ubuntu/comongjava/build/libs/practice-githubAction-deploy-0.0.1-SNAPSHOT.jar)
+JAR_NAME=$(basename $BUILD_JAR)
+
+echo "> 현재 시간: $(date)" >> /home/ubuntu/comongjava/deploy.log
+
+echo "> build 파일명: $JAR_NAME" >> /home/ubuntu/comongjava/deploy.log
+
+echo "> build 파일 복사" >> /home/ubuntu/comongjava/deploy.log
+DEPLOY_PATH=/home/ubuntu/comongjava/
+cp $BUILD_JAR $DEPLOY_PATH
+
+echo "> 현재 실행중인 애플리케이션 pid 확인" >> /home/ubuntu/comongjava/deploy.log
+CURRENT_PID=$(pgrep -f $JAR_NAME)
+
+if [ -z $CURRENT_PID ]
+then
+  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> /home/ubuntu/comongjava/deploy.log
 else
- echo "> kill -15 $CURRENT_PID"
- kill -15 $CURRENT_PID
- sleep 5
+  echo "> kill -15 $CURRENT_PID" >> /home/ubuntu/comongjava/deploy.log
+  sudo kill -15 $CURRENT_PID
+  sleep 5
 fi
-echo "> 새 애플리케이션 배포"
-JAR_NAME=$(ls -tr $REPOSITORY/ | grep jar | tail -n 1)
-echo "> JAR Name: $JAR_NAME"
-nohup java -jar $REPOSITORY/$JAR_NAME 2>&1 &
+
+
+DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
+echo "> DEPLOY_JAR 배포"    >> /home/ubuntu/comongjava/deploy.log
+sudo nohup java -jar $DEPLOY_JAR >> /home/ubuntu/deploy.log 2>/home/ubuntu/comongjava/deploy_err.log &
