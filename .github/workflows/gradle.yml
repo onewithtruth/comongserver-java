@@ -16,6 +16,9 @@ on:
 permissions:
   contents: read
 
+env:
+  S3_BUCKET_NAME: comong-java-server-01
+
 jobs:
   build:
 
@@ -35,7 +38,7 @@ jobs:
     
     # build 후 프로젝트 압축.
     - name: Make zip file
-      run: zip -r ./practice-deploy.zip .
+      run: zip -r ./comongjava-deploy.zip .
       shell: bash
 
     #Access key, Secret Access key 를 통해 권한 확인.
@@ -46,4 +49,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
        
+    #압축된 프로젝트 S3로 전송
+    - name: Uplaod to S3
+      run: aws s3 cp --region ap-northeast-2 ./comongjava-deploy.zip s3://$S3_BUCKET_NAME/comongjava-deploy.zip
      
