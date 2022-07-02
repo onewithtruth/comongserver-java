@@ -22,6 +22,7 @@ else
   sleep 5
 fi
 
+chmod +x ./deploy.sh
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ubuntu/comongjava/deploy.log
