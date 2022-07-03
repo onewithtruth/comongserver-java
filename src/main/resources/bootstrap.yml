@@ -1,7 +1,0 @@
-aws:
-  paramstore:
-    enabled: true
-    prefix: /comong-spring-boot-aws
-    name: cloud-parameter-store
-    profile-separator: _
-
